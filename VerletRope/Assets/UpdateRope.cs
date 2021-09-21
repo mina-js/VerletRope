@@ -24,36 +24,51 @@ public class UpdateRope : MonoBehaviour
     {
         foreach (var point in points)
         {
-            var vx = (point.x - point.oldX) * friction;
-            var vy = (point.y - point.oldY) * friction;
+            if (!point.isFixed)
+            {
+                var vx = (point.x - point.oldX) * friction;
+                var vy = (point.y - point.oldY) * friction;
 
-            point.oldX = point.x;
-            point.oldY = point.y;
+                point.oldX = point.x;
+                point.oldY = point.y;
 
-            point.x += vx;
-            point.y += vy;
-            point.y += gravity;
+                point.x += vx;
+                point.y += vy;
+                point.y += gravity;
+            }
         }
     }
 
     void UpdateSticks()
     {
-        foreach (var stick in sticks)
+        for(int i = 0; i < 3; i++)
         {
-            var dx = stick.p1.x - stick.p2.x;
-            var dy = stick.p1.y - stick.p2.y;
+            foreach (var stick in sticks)
+            {
+                var dx = stick.p1.x - stick.p2.x;
+                var dy = stick.p1.y - stick.p2.y;
 
-            var distance = Mathf.Sqrt(dx * dx + dy * dy);
-            var difference = stick.length - distance;
-            var percent = difference / distance / 2;
-            var offsetX = dx * percent;
-            var offsetY = dy * percent;
+                var distance = Mathf.Sqrt(dx * dx + dy * dy);
+                var difference = stick.length - distance;
+                var percent = difference / distance / 2;
+                var offsetX = dx * percent;
+                var offsetY = dy * percent;
 
-            stick.p1.x += offsetX;
-            stick.p1.y += offsetY;
-            stick.p2.x -= offsetX;
-            stick.p2.y -= offsetY;
+                if (!stick.p1.isFixed)
+                {
+                    stick.p1.x += offsetX;
+                    stick.p1.y += offsetY;
+                }
+
+                if (!stick.p2.isFixed)
+                {
+                    stick.p2.x -= offsetX;
+                    stick.p2.y -= offsetY;
+                }
+
+            }
         }
+
     }
 
     // Update is called once per frame
